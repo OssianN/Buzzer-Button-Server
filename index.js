@@ -8,7 +8,7 @@ const io = new Server(server);
 const port = 4000;
 
 app.get('/', (req, res) => {
-  res.sendFile("hello world!");
+  res.json("hello world!");
 });
 
 io.on('connection', (socket) => {
