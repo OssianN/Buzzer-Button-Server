@@ -1,12 +1,15 @@
-require('dotenv').config();
-const express = require("express");
+const express = require('express');
 const app = express();
-const server = require('http').Server(app);
-
-const socketIo = require("socket.io");
-const io = socketIo(server)
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server);
 
 const port = 4000;
+
+app.get('/', (req, res) => {
+  res.sendFile("hello world!");
+});
 
 io.on('connection', (socket) => {
   console.log('a user connected');
