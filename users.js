@@ -1,14 +1,14 @@
 const users = [];
 const rooms = [];
 
-const addUser = (room, name) => {
+const addUser = (name, room, id) => {
   const isUser = users.find((user) => user.room === room && user.name === name);
 
   if (isUser) {
     return { error: "name taken" };
   }
 
-  const user = { room, name };
+  const user = { room, name, id };
   users.push(user);
   return { error: null, user };
 };
@@ -24,4 +24,8 @@ const createRoom = (room) => {
   return { error: null, roomName: room };
 };
 
-module.exports = { addUser, createRoom };
+const getRoomUsers = (room) => {
+  return users.filter((user) => user.room === room);
+};
+
+module.exports = { addUser, createRoom, getRoomUsers };
