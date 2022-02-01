@@ -5,7 +5,13 @@ const io = require("socket.io")(http, {
     origin: ["http://localhost:3000", "https://buzzer-button.netlify.app"],
   },
 });
-const { addUser, createRoom, getRoomUsers, userBuzzed } = require("./users.js");
+const {
+  addUser,
+  createRoom,
+  getRoomUsers,
+  userBuzzed,
+  resetBuzz,
+} = require("./users.js");
 
 io.on("connection", (socket) => {
   console.log("User joined:", socket.id);
@@ -31,9 +37,15 @@ io.on("connection", (socket) => {
     callback(null, user);
   });
 
-  socket.on("buzz", (user) => {
-    userBuzzed(user.Id);
-    io.in(user.room).emit("buzzed", user.id);
+  socket.on("buzz", (user, time, callback) => {
+    userBuzzed(user.Id, time);
+    io.in(user.room).emit("buzzed", user.id, time);
+    callback(time);
+  });
+
+  socket.on("reset buzz", (room) => {
+    resetBuzz();
+    io.in(room).emit("buzz has reset");
   });
 
   socket.on("disconnect", () => {

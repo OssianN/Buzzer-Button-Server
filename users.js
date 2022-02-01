@@ -8,7 +8,7 @@ const addUser = (id, name, room, host) => {
     return { error: "name taken" };
   }
 
-  const user = { id, room, name, host, buzzed: false };
+  const user = { id, room, name, host, buzzed: null };
   users.push(user);
   return { error: null, user };
 };
@@ -28,8 +28,12 @@ const getRoomUsers = (room) => {
   return users.filter((user) => user.room === room);
 };
 
-const userBuzzed = (id) => {
-  users.forEach((user) => (user.id === id ? (user.buzzed = true) : null));
+const userBuzzed = (id, time) => {
+  users.forEach((user) => (user.id === id ? (user.buzzed = time) : null));
 };
 
-module.exports = { addUser, createRoom, getRoomUsers, userBuzzed };
+const resetBuzz = () => {
+  users.forEach((user) => (user.buzzed = null));
+};
+
+module.exports = { addUser, createRoom, getRoomUsers, userBuzzed, resetBuzz };
