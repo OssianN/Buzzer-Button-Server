@@ -5,31 +5,35 @@ const io = require("socket.io")(http, {
     origin: ["http://localhost:3000", "https://buzzer-button.netlify.app"],
   },
 });
-const { addUser, createRoom, getRoomUsers } = require("./users.js");
+const { addUser, createRoom, getRoomUsers, userBuzzed } = require("./users.js");
 
 io.on("connection", (socket) => {
   console.log("User joined:", socket.id);
 
-  socket.on("create", ({ room, name }, callback) => {
+  socket.on("create", ({ room }, callback) => {
     const { error } = createRoom(room);
     if (error) {
       return callback(error);
     }
 
     socket.join(room);
-    io.in(room).emit("user joined", { name, room, host: true });
-    io.in(room).emit("message", { msg: `hey, ${name} this is ${room}` });
+    callback();
   });
 
-  socket.on("join", ({ name, room }, callback) => {
-    const { error } = addUser(name, room, socket.id);
+  socket.on("join", ({ name, room, host }, callback) => {
+    const { error, user } = addUser(socket.id, name, room, host);
     if (error) {
       return callback(error);
     }
 
     socket.join(room);
     io.in(room).emit("host list", getRoomUsers(room));
-    io.in(room).emit("message", { msg: `hey, ${name} this is ${room}` });
+    callback(null, user);
+  });
+
+  socket.on("buzz", (user) => {
+    userBuzzed(user.Id);
+    io.in(user.room).emit("buzzed", user.id);
   });
 
   socket.on("disconnect", () => {
