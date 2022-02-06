@@ -2,27 +2,24 @@ const app = require("express")();
 const http = require("http").createServer(app);
 const io = require("socket.io")(http, {
   cors: {
-    origin: ["http://localhost:3000", "https://buzzer-button.netlify.app"],
+    origin: ["http://localhost:3001", "https://buzzer-button.netlify.app"],
   },
 });
 const {
   addUser,
-  createRoom,
   getRoomUsers,
+  addHost,
   userBuzzed,
   resetBuzz,
+  removeUser,
 } = require("./users.js");
 
 io.on("connection", (socket) => {
   console.log("User joined:", socket.id);
 
-  socket.on("create", ({ room }, callback) => {
-    const { error } = createRoom(room);
-    if (error) {
-      return callback(error);
-    }
-
+  socket.on("join host", ({ room }, callback) => {
     socket.join(room);
+    addHost(socket.id, room);
     callback();
   });
 
@@ -50,6 +47,7 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log("User left:", socket.id);
+    removeUser(socket.id);
   });
 });
 

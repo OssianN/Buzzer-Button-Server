@@ -1,27 +1,24 @@
 const users = [];
-const rooms = [];
 
 const addUser = (id, name, room, host) => {
   const isUser = users.find((user) => user.room === room && user.name === name);
+  // const isRoom = users.find((user) => user.room === room);
 
   if (isUser) {
     return { error: "name taken" };
   }
+
+  // if (!isRoom) {
+  //   return { error: "room does not exist" };
+  // }
 
   const user = { id, room, name, host, buzzed: null };
   users.push(user);
   return { error: null, user };
 };
 
-const createRoom = (room) => {
-  const isRoom = rooms.find((roomName) => roomName === room);
-
-  if (isRoom) {
-    return { error: "room taken" };
-  }
-
-  rooms.push(room);
-  return { error: null };
+const addHost = (id, room) => {
+  users.push({ id, room, host: true });
 };
 
 const getRoomUsers = (room) => {
@@ -36,4 +33,16 @@ const resetBuzz = () => {
   users.forEach((user) => (user.buzzed = null));
 };
 
-module.exports = { addUser, createRoom, getRoomUsers, userBuzzed, resetBuzz };
+const removeUser = (id) => {
+  const userIndex = users.indexOf((user) => user.id === id);
+  users.splice(userIndex, 1);
+};
+
+module.exports = {
+  addUser,
+  getRoomUsers,
+  addHost,
+  userBuzzed,
+  resetBuzz,
+  removeUser,
+};
