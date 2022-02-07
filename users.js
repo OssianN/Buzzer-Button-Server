@@ -22,7 +22,7 @@ const addHost = (id, room) => {
 };
 
 const getRoomUsers = (room) => {
-  return users.filter((user) => user.room === room);
+  return users.filter((user) => user.room === room && !user.host);
 };
 
 const userBuzzed = (id, time) => {

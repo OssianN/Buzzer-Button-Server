@@ -30,8 +30,8 @@ io.on("connection", (socket) => {
     }
 
     socket.join(room);
-    io.in(room).emit("host list", getRoomUsers(room));
     callback(null, user);
+    io.in(room).emit("host list", getRoomUsers(room));
   });
 
   socket.on("buzz", (user, time, callback) => {
